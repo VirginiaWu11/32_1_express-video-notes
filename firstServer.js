@@ -84,6 +84,26 @@ app.post("/register", (req, res) => {
     res.send(req.body);
 });
 
+// responding with json | res.json
+const CANDIES = [
+    { name: "snickers", qty: 43, price: 1.5 },
+    { name: "skittles", qty: 26, price: 0.99 },
+];
+
+app.get("/candies", (req, res) => {
+    res.json(CANDIES);
+});
+
+app.post("/candies", (req, res) => {
+    // status code
+
+    if (req.body.name.toLowerCase() === "circus peanuts") {
+        res.status(403).json({ msg: "horrible choice" });
+    }
+    CANDIES.push(req.body);
+    res.status(201).json(CANDIES);
+});
+
 //app.listen should be at the end of the file
 app.listen(3000, function () {
     console.log("App on port 3000");

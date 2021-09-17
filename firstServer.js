@@ -1,6 +1,11 @@
 const express = require("express");
 const app = express();
 
+//parse json data
+app.use(express.json());
+//parse form data
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/", (req, res) => {
     res.send("Homepage");
 });
@@ -24,6 +29,7 @@ const greetings = {
     ja: "konnichiwa",
 };
 
+// paramerters example
 app.get("/greet/:language/:color", (req, res) => {
     console.log(req.params);
     const lang = req.params.language;
@@ -33,6 +39,49 @@ app.get("/greet/:language/:color", (req, res) => {
     if (!greeting) return res.send("INVALID LANGUAGE");
 
     return res.send(greeting.toUpperCase());
+});
+
+//  query string example
+// '/search?term=pig&sort=cute"
+app.get("/search", (req, res) => {
+    console.log(req.query);
+    // sample: { term: 'pig', sort: 'cute' } // = default values
+    const { term = "piggies", sort = "top" } = req.query;
+    return res.send(`Search Page! Term is: ${term}, sort is: ${sort}`);
+});
+
+// headers example
+app.get("/show-me-headers", (req, res) => {
+    console.log(req.rawHeaders);
+    console.log(req.headers);
+    res.send(req.headers);
+});
+// req.headers sample:
+// {
+//     "host": "127.0.0.1:3000",
+//     "connection": "keep-alive",
+//     "sec-ch-ua": "\"Google Chrome\";v=\"93\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"93\"",
+//     "sec-ch-ua-mobile": "?0",
+//     "sec-ch-ua-platform": "\"macOS\"",
+//     "upgrade-insecure-requests": "1",
+//     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
+//     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+//     "sec-fetch-site": "none",
+//     "sec-fetch-mode": "navigate",
+//     "sec-fetch-user": "?1",
+//     "sec-fetch-dest": "document",
+//     "accept-encoding": "gzip, deflate, br",
+//     "accept-language": "en-US,en;q=0.9",
+//     "if-none-match": "W/\"305-F6WUsNSi5mwkBwbJRoM1sb3y8lI\""
+//   }
+
+app.get("/show-language", (req, res) => {
+    const lang = req.headers["accept-language"];
+    res.send(`your language preference is: ${lang}`);
+});
+
+app.post("/register", (req, res) => {
+    res.send(req.body);
 });
 
 //app.listen should be at the end of the file
